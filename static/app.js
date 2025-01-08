@@ -38,7 +38,7 @@ document.getElementById("generateAnswer").addEventListener("click", async (e) =>
     formData.append("question", questionInput.value);
 
     try {
-        const response = await fetch("127.0.0.1:8000/ask/", {
+        const response = await fetch("https://efiway.onrender.com/ask/", {
             method: "POST",
             body: formData,
         });
