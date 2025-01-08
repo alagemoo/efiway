@@ -129,7 +129,7 @@ async def ask_question(
 
         return {
             "answer": f"<div style='font-size: 16px; font-weight: bold; color: #007BFF;'>{formatted_answer}</div>",
-            "explanation": formatted_explanation
+            "explanation": f"<div style='font-family: Arial, sans-serif; font-size: 14px; line-height: 1.8; color: #444;'>{formatted_explanation}</div>"
         }
 
     except Exception as e:
