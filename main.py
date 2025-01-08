@@ -86,7 +86,7 @@ async def ask_question(
         max_characters = 6000
         text_content = text_content[:max_characters] + "..." if len(text_content) > max_characters else text_content
 
-        # Call OpenAI API using GPT-3.5
+        # Call OpenAI API using GPT-3.5 for faster responses
         try:
             openai.api_key = os.getenv("OPENAI_API_KEY")
             openai_response = openai.ChatCompletion.create(
@@ -119,13 +119,18 @@ async def ask_question(
         raw_answer = openai_response.choices[0].message.content.strip()
         explanation = explanation_response.choices[0].message.content.strip()
 
+        # Enhanced formatting with better structure
         formatted_answer = "".join(
             f"<p>{line.strip()}</p>" if not line.startswith("-") else f"<li>{line[1:].strip()}</li>"
             for line in raw_answer.split("\n")
         )
         formatted_answer = f"<ul>{formatted_answer}</ul>" if "<li" in formatted_answer else formatted_answer
 
-        formatted_explanation = f"<p style='font-size: 15px; line-height: 1.8; color: #555;'>{explanation}</p>"
+        formatted_explanation = "".join(
+            f"<p>{line.strip()}</p>" if not line.startswith("-") else f"<li>{line[1:].strip()}</li>"
+            for line in explanation.split("\n")
+        )
+        formatted_explanation = f"<ul>{formatted_explanation}</ul>" if "<li" in formatted_explanation else formatted_explanation
 
         return {
             "answer": f"<div style='font-size: 16px; font-weight: bold; color: #007BFF;'>{formatted_answer}</div>",
