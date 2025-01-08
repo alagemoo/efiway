@@ -1,6 +1,6 @@
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8200)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000)
 
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,14 +12,17 @@ from docx import Document
 #from dotenv import load_dotenv
 
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 
 app = FastAPI()
 
+# Mount static files for CSS and JS
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Configure templates directory for HTML
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)

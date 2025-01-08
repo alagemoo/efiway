@@ -38,7 +38,7 @@ document.getElementById("generateAnswer").addEventListener("click", async (e) =>
     formData.append("question", questionInput.value);
 
     try {
-        const response = await fetch("http://127.0.0.1:8200/ask/", {
+        const response = await fetch("127.0.0.1:8000/ask/", {
             method: "POST",
             body: formData,
         });
