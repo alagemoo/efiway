@@ -1,8 +1,9 @@
+openai
 fastapi
 uvicorn
 PyPDF2
 python-docx
-openai
 passlib
 python-jose
 python-multipart
+Jinja2
