@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import openai
+from dotenv import load_dotenv
 import os
 from typing import Optional
 from io import BytesIO
@@ -11,6 +12,8 @@ from PyPDF2 import PdfReader
 from docx import Document
 import hashlib
 import logging
+
+load_dotenv()
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
