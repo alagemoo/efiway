@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quixxa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Quixxa</h1>
+        <div class="user-info">
+            <span>67 points left</span>
+            <div class="user-circle"></div>
+        </div>
+    </header>
+    <nav>
+        <a href="#" class="active">Assessment</a>
+        <a href="#">Quiz</a>
+        <a href="#">Summary</a>
+    </nav>
+    <div class="container">
+        <!-- Left Section -->
+        <div class="left-section">
+            <input type="file" id="fileInput">
+            <label for="fileInput">Upload Reference Document</label>
+            <p id="fileStatus" style="margin-top: 10px; font-size: 14px; color: #666;">No file selected</p>
+        </div>
+
+        <!-- Middle Section -->
+        <div class="middle-section">
+            <textarea id="questionInput" placeholder="Input questions and multiple-choice answer."></textarea>
+            <button id="generateAnswer">Get Answer</button>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section" id="responseSection">
+            <h3>Response:</h3>
+            <div id="responseContent">
+                <p>Your AI-generated response will appear here...</p>
+            </div>
+        </div>
+        
+
+    <script src="app.js"></script> <!-- Link to the JavaScript file -->
+</body>
+</html>

@@ -1,0 +1,281 @@
+// MVP - Consolidated Code for the Application
+
+// app.js
+// Update file status when a file is selected
+document.getElementById("fileInput").addEventListener("change", (event) => {
+    const fileStatus = document.getElementById("fileStatus");
+    const file = event.target.files[0];
+
+    if (file) {
+        // Display the selected file name
+        fileStatus.textContent = `Selected file: ${file.name}`;
+        fileStatus.style.color = "#333"; // Change color to indicate success
+    } else {
+        // Reset if no file is selected
+        fileStatus.textContent = "No file selected";
+        fileStatus.style.color = "#666"; // Default color
+    }
+});
+
+// Handle the "Get Answer" button click
+document.getElementById("generateAnswer").addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const fileInput = document.getElementById("fileInput");
+    const questionInput = document.getElementById("questionInput");
+    const responseSection = document.getElementById("responseSection");
+
+    // Ensure file and question are provided
+    if (!fileInput.files.length || !questionInput.value) {
+        alert("Please upload a file and enter a question.");
+        return;
+    }
+
+    // Show a loading message while processing
+    responseSection.innerHTML = `<p>Loading...</p>`;
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+    formData.append("question", questionInput.value);
+
+    try {
+        const response = await fetch("http://127.0.0.1:8200/ask/", {
+            method: "POST",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        // Check if the backend returned an error
+        if (result.error) {
+            responseSection.innerHTML = `<p style="color: red;">${result.error}</p>`;
+            console.error("Backend error:", result.error);
+            return;
+        }
+
+        // Display the answer and explanation with proper formatting
+        responseSection.innerHTML = `
+            <p><strong>Answer:</strong> ${result.answer}</p>
+            <blockquote>${result.explanation}</blockquote>
+        `;
+    } catch (error) {
+        // Handle fetch or network errors
+        console.error("Error:", error);
+        responseSection.innerHTML = `
+            <p style="color: red;">An error occurred. Please try again.</p>
+        `;
+    }
+});
+
+
+/* main.py */
+from fastapi import FastAPI, File, UploadFile, Form
+from fastapi.middleware.cors import CORSMiddleware
+import openai
+from typing import Optional
+from io import BytesIO
+from PyPDF2 import PdfReader
+from docx import Document
+
+app = FastAPI()
+
+# Add CORS middleware to allow frontend-backend communication
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins for development. Restrict in production.
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
+
+def extract_text(file: UploadFile) -> Optional[str]:
+    """
+    Extract text from uploaded file based on its type.
+    Supports TXT, DOCX, and PDF files.
+    """
+    try:
+        # Handle TXT files
+        if file.filename.endswith(".txt"):
+            content = file.file.read().decode("utf-8")
+            return content
+
+        # Handle DOCX files
+        elif file.filename.endswith(".docx"):
+            doc = Document(BytesIO(file.file.read()))
+            content = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+            return content
+
+        # Handle PDF files
+        elif file.filename.endswith(".pdf"):
+            pdf_reader = PdfReader(BytesIO(file.file.read()))
+            content = ""
+            for page in pdf_reader.pages:
+                content += page.extract_text()
+            return content
+
+        # Unsupported file format
+        else:
+            return None
+
+    except Exception as e:
+        print(f"Error reading file: {str(e)}")
+        return None
+
+
+@app.post("/ask/")
+async def ask_question(
+    file: UploadFile = File(...),
+    question: str = Form(...),
+):
+    try:
+        # Extract text from the uploaded file
+        print(f"Received file: {file.filename}")
+        text_content = extract_text(file)
+        if not text_content:
+            print("Failed to extract text or unsupported file type.")
+            return {"error": f"Unsupported file type or failed to extract text from {file.filename}"}
+
+        print(f"Extracted text (first 200 characters): {text_content[:200]}")
+
+        # Call OpenAI API
+        try:
+            openai.api_key = "YOUR_API_KEY"  # Replace with your OpenAI API key
+            openai_response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": f"Document content: {text_content}"},
+                    {"role": "user", "content": f"Question: {question}"}
+                ]
+            )
+        except Exception as e:
+            print(f"OpenAI API error: {e}")
+            return {"error": "Failed to get a response from OpenAI. Please try again later."}
+
+        # Extract response content
+        answer = openai_response["choices"][0]["message"]["content"]
+        print(f"AI Response: {answer}")
+
+        return {
+            "answer": answer,
+            "explanation": f"The answer is based on the content of '{file.filename}'."
+        }
+
+    except Exception as e:
+        print(f"Unhandled error: {e}")
+        return {"error": f"An unexpected error occurred: {str(e)}"}
+
+
+/* styles.css */
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+header {
+    background-color: #f1f1f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 2px solid #ddd;
+}
+
+header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+header .user-info {
+    display: flex;
+    align-items: center;
+}
+
+header .user-info span {
+    margin-right: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+header .user-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ff6b6b;
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: white;
+    padding: 10px 0;
+    border-bottom: 2px solid #ddd;
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+nav a.active {
+    color: #ff6b6b;
+    border-bottom: 2px solid #ff6b6b;
+    padding-bottom: 5px;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    padding: 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.left-section {
+    width: 30%;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.left-section input[type="file"] {
+    display: none;
+}
+
+.left-section label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ff6b6b;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.left-section label:hover {
+    background-color: #e05a5a;
+}
+
+.right-section {
+    width: 30%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+.right-section h3 {
+    margin-bottom: 10px;
+    font-size: 18px

@@ -1,0 +1,258 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+header {
+    background-color: #f1f1f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 2px solid #ddd;
+}
+
+header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+header .user-info {
+    display: flex;
+    align-items: center;
+}
+
+header .user-info span {
+    margin-right: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+header .user-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ff6b6b;
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: white;
+    padding: 10px 0;
+    border-bottom: 2px solid #ddd;
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+nav a.active {
+    color: #ff6b6b;
+    border-bottom: 2px solid #ff6b6b;
+    padding-bottom: 5px;
+}
+
+/* Content Layout */
+.container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    padding: 20px;
+    flex-wrap: wrap; /* Allows wrapping for smaller screens */
+    gap: 20px; /* Adds space between sections */
+}
+
+/* Left Section */
+.left-section {
+    width: 30%;
+    text-align: center;
+    flex-grow: 1; /* Allows resizing on smaller screens */
+}
+
+.left-section input[type="file"] {
+    display: none;
+}
+
+.left-section label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ff6b6b;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.left-section label:hover {
+    background-color: #e05a5a;
+}
+
+/* Middle Section */
+.middle-section {
+    width: 40%;
+    text-align: center;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    flex-grow: 2; /* Takes more space on smaller screens */
+}
+
+.middle-section textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.middle-section button {
+    padding: 10px 20px;
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.middle-section button:hover {
+    background-color: #e05a5a;
+}
+
+/* Right Section */
+.right-section {
+    width: 30%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    flex-grow: 1; /* Allows resizing on smaller screens */
+}
+
+.right-section h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #333;
+}
+
+.right-section p {
+    margin: 10px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.right-section p strong {
+    color: #333;
+}
+
+.right-section .reference {
+    color: #888;
+    font-size: 12px;
+    margin-top: 20px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1024px) {
+    .container {
+        flex-direction: column; /* Stack sections vertically */
+        align-items: center;
+    }
+
+    .left-section,
+    .middle-section,
+    .right-section {
+        width: 90%; /* Full width for smaller screens */
+    }
+
+    .middle-section {
+        margin-bottom: 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    header h1 {
+        font-size: 20px;
+    }
+
+    nav a {
+        font-size: 14px;
+    }
+
+    .middle-section textarea {
+        height: 80px; /* Smaller textarea for small screens */
+    }
+
+    .right-section h3 {
+        font-size: 16px;
+    }
+
+    .right-section p {
+        font-size: 12px;
+    }
+
+    .right-section .reference {
+        font-size: 10px;
+    }
+}
+
+/* Right Section Styling */
+.right-section {
+    width: 30%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Enable scrolling if the content is too long */
+    max-height: 500px; /* Set a maximum height for the section */
+}
+
+.right-section h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.right-section p {
+    margin: 10px 0;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.6; /* Improve readability */
+}
+
+.right-section strong {
+    color: #333; /* Highlight strong text */
+}
+
+.right-section blockquote {
+    margin: 10px 0;
+    padding-left: 15px;
+    border-left: 4px solid #ff6b6b;
+    color: #666;
+    font-style: italic;
+    font-size: 14px;
+}
+
+/* Styling for Bullet Points in Suggestions */
+.response-container ul {
+    margin: 10px 0 0 20px;
+    padding: 0;
+    list-style-type: disc;
+}
+
+.response-container li {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
