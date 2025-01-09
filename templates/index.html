@@ -3,45 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title href="#">efiway</title>
+    <title>Quixxa App</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <header>
-        <h1>efiway</h1>
-        <div class="user-info">
-            <span></span>
-            <div class="user-circle"></div>
-        </div>
-    </header>
-    <nav>
-        <a href="#" class="active">Assessment</a>
-        <a href="#">Quiz</a>
-        <a href="#">Summary</a>
-    </nav>
     <div class="container">
-        <!-- Left Section -->
-        <div class="left-section">
-            <input type="file" id="fileInput">
-            <label for="fileInput">Upload Reference Document</label>
-            <p id="fileStatus" style="margin-top: 10px; font-size: 14px; color: #666;">No file selected</p>
-        </div>
+        <header>
+            <h1>Quixxa App</h1>
+            <p>Login to access the features.</p>
+        </header>
 
-        <!-- Middle Section -->
-        <div class="middle-section">
-            <textarea id="questionInput" placeholder="Input questions and multiple-choice answer."></textarea>
-            <button id="generateAnswer">Get Answer</button>
-        </div>
+        <!-- Login Form -->
+        <section id="loginSection">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <div id="loginError" class="error-message hidden"></div>
 
-        <!-- Right Section -->
-        <div class="right-section" id="responseSection">
-            <h3>Response:</h3>
-            <div id="responseContent">
-                <p>Your AI-generated response will appear here...</p>
+            <!-- Google Login Button -->
+            <div id="googleLogin">
+                <p>Or login with:</p>
+                <button id="googleLoginButton">Google Login</button>
             </div>
-        </div>
-        
+        </section>
 
-    <script src="/static/app.js"></script> <!-- Link to the JavaScript file -->
+        <!-- Main Content (hidden until logged in) -->
+        <section id="mainContent" class="hidden">
+            <h2>Ask a Question</h2>
+            <form id="questionForm">
+                <div class="input-group">
+                    <label for="fileInput">Upload File</label>
+                    <input type="file" id="fileInput" name="file" required>
+                </div>
+                <div class="input-group">
+                    <label for="questionInput">Enter Your Question</label>
+                    <textarea id="questionInput" name="question" rows="4" required></textarea>
+                </div>
+                <button type="submit">Get Answer</button>
+            </form>
+            <div id="responseSection" class="response-section">
+                <p>Results will appear here...</p>
+            </div>
+        </section>
+    </div>
+    <script src="/static/app.js"></script>
 </body>
 </html>

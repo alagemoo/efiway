@@ -1,0 +1,24 @@
+Partnership with Universities, Academia for Institutions
+
+1. The objectives (2 major obj)
+2. KPA, and KPI
+3. Plan for the year, timeline
+
+
+git add main.py
+git commit -m "Installed Multi-part in main.py"
+git push origin main
+
+
+git add .
+git commit -m "Installing python-dotenv"
+git push origin main
+
+A square matrix in which all elements are zero except those in the main or principal diagonal is called_
+
+a. Identity Matrix
+b. Disjunct Matrix
+c. Diagonal matrix
+d. Null Matrix
+
+a80bbb9597cc4569a5e7b048c5f74845

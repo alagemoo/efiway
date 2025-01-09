@@ -8,3 +8,10 @@ python-jose
 python-multipart
 Jinja2
 python-dotenv
+passlib[bcrypt]
+docx
+google-auth
+google-auth-oauthlib
+psycopg2-binary
+requests
+databases
