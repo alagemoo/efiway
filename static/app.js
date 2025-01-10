@@ -231,3 +231,43 @@ document.getElementById("logoutButton").addEventListener("click", () => {
     alert("You have been logged out.");
     window.location.href = "/";
 });
+
+// Check if redirected back with an access_token
+if (window.location.search.includes("access_token")) {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("access_token");
+
+    if (token) {
+        // Store the token in localStorage or sessionStorage
+        localStorage.setItem("token", token);
+
+        // Redirect to the main application or reload the page
+        alert("Google login successful!");
+        window.location.href = "/"; // Replace with dashboard URL if needed
+    } else {
+        alert("Google login failed. Please try again.");
+    }
+}
+
+// Example function to check login state
+function checkLoginState() {
+    const token = localStorage.getItem("token");
+    if (token) {
+        // User is logged in
+        document.getElementById("loginSection").classList.add("hidden");
+        document.getElementById("mainContent").classList.remove("hidden");
+    } else {
+        // User is not logged in
+        document.getElementById("loginSection").classList.remove("hidden");
+        document.getElementById("mainContent").classList.add("hidden");
+    }
+}
+
+// Call the function to check login state on page load
+checkLoginState();
+
+document.getElementById("logoutButton").addEventListener("click", () => {
+    localStorage.removeItem("token");
+    alert("You have been logged out.");
+    window.location.href = "/";
+});
