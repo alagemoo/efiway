@@ -15,3 +15,4 @@ google-auth-oauthlib
 psycopg2-binary
 requests
 databases
+asyncpg
