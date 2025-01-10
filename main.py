@@ -165,7 +165,7 @@ async def google_login():
     google_auth_url = (
         f"https://accounts.google.com/o/oauth2/v2/auth"
         f"?client_id={GOOGLE_CLIENT_ID}"
-        f"&redirect_uri=http://127.0.0.1:8000/google-auth/callback"
+        f"&redirect_uri=https://efiway.onrender.com/google-auth/callback"
         f"&response_type=code&scope=openid email profile"
     )
     return {"url": google_auth_url}
@@ -179,7 +179,7 @@ async def google_auth_callback(code: str):
             "code": code,
             "client_id": GOOGLE_CLIENT_ID,
             "client_secret": GOOGLE_CLIENT_SECRET,
-            "redirect_uri": "http://127.0.0.1:8000/google-auth/callback",
+            "redirect_uri": "https://efiway.onrender.com/google-auth/callback",
             "grant_type": "authorization_code",
         }
         token_response = requests.post(token_url, data=token_data).json()
@@ -203,7 +203,7 @@ async def google_auth_callback(code: str):
         access_token = create_access_token(data={"sub": email})
 
         # Redirect to front-end with the token
-        redirect_url = f"http://127.0.0.1:8000/?access_token={access_token}"
+        redirect_url = f"https://efiway.onrender.com/?access_token={access_token}"
         return RedirectResponse(url=redirect_url)
 
     except Exception as e:
@@ -301,7 +301,7 @@ async def google_login():
     google_auth_url = (
         f"https://accounts.google.com/o/oauth2/v2/auth"
         f"?client_id={GOOGLE_CLIENT_ID}"
-        f"&redirect_uri=http://127.0.0.1:8000/google-auth/callback"
+        f"&redirect_uri=https://efiway.onrender.com/google-auth/callback"
         f"&response_type=code&scope=openid email profile"
     )
     return {"url": google_auth_url}

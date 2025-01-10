@@ -69,7 +69,7 @@ if (loginForm) {
         const password = document.getElementById("password").value;
 
         try {
-            const response = await fetch("0.0.0.0:8000/token/", {
+            const response = await fetch("https://efiway.onrender.com/token/", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: new URLSearchParams({ username, password }),
@@ -136,7 +136,7 @@ if (questionForm) {
         const token = localStorage.getItem("accessToken");
 
         try {
-            const response = await fetch("0.0.0.0:8000/ask/", {
+            const response = await fetch("https://efiway.onrender.com/ask/", {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -179,7 +179,7 @@ if (questionForm) {
 document.getElementById("googleLoginButton").addEventListener("click", async () => {
     try {
         // Fetch the Google login URL from the backend
-        const response = await fetch("0.0.0.0:8000/google-login/");
+        const response = await fetch("https://efiway.onrender.com/google-login/");
         const data = await response.json();
 
         if (data.url) {
