@@ -38,6 +38,12 @@ if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL is not set in environment variables")
 database = Database(DATABASE_URL)
 
+# Mount static files for serving CSS, JS, etc.
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Configure template rendering for HTML files
+templates = Jinja2Templates(directory="templates")
+
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -49,6 +55,7 @@ app.add_middleware(
 
 # Static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 # Authentication settings
 SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key_here")
