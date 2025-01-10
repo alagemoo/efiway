@@ -132,6 +132,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 # Routes
 @app.get("/", response_class=HTMLResponse)
 async def serve_homepage(request: Request):
+    token = request.query_params.get("access_token")
+    if token:
+        try:
+            user = await get_current_user(token)
+            return templates.TemplateResponse("index.html", {"request": request, "user": user})
+        except HTTPException:
+            return templates.TemplateResponse("index.html", {"request": request, "error": "Invalid token"})
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/register/")
@@ -209,104 +216,3 @@ async def google_auth_callback(code: str):
     except Exception as e:
         logging.error(f"Google authentication error: {str(e)}")
         raise HTTPException(status_code=400, detail="Google Authentication failed")
-
-# File handling
-def extract_text(file: UploadFile) -> Optional[str]:
-    try:
-        if file.filename.endswith(".txt"):
-            return file.file.read().decode("utf-8")
-        elif file.filename.endswith(".docx"):
-            doc = Document(BytesIO(file.file.read()))
-            return "\n".join([paragraph.text for paragraph in doc.paragraphs])
-        elif file.filename.endswith(".pdf"):
-            pdf_reader = PdfReader(BytesIO(file.file.read()))
-            return "".join(page.extract_text() for page in pdf_reader.pages)
-        else:
-            return None
-    except Exception as e:
-        logging.error(f"Error reading file: {str(e)}")
-        return None
-
-@app.post("/ask/")
-async def ask_question(
-    file: UploadFile = File(...),
-    question: str = Form(...),
-    current_user: dict = Depends(get_current_user),
-):
-    try:
-        file_content = file.file.read()
-        file_hash = hashlib.md5(file_content).hexdigest()
-
-        if file_hash in file_cache:
-            text_content = file_cache[file_hash]
-        else:
-            text_content = extract_text(UploadFile(filename=file.filename, file=BytesIO(file_content)))
-            if not text_content:
-                return {"error": f"Unsupported file type or failed to extract text from {file.filename}"}
-            file_cache[file_hash] = text_content
-
-        max_characters = 6000
-        text_content = text_content[:max_characters] + "..." if len(text_content) > max_characters else text_content
-
-        openai.api_key = os.getenv("OPENAI_API_KEY")
-        openai_response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Document content: {text_content}"},
-                {"role": "user", "content": f"Question: {question}"}
-            ],
-            max_tokens=500,
-            temperature=0.7
-        )
-
-        explanation_response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Document content: {text_content}"},
-                {"role": "user", "content": f"Question: {question}"},
-                {"role": "user", "content": "Explain why the answer is correct."}
-            ],
-            max_tokens=300,
-            temperature=0.7
-        )
-
-        raw_answer = openai_response.choices[0].message.content.strip()
-        explanation = explanation_response.choices[0].message.content.strip()
-
-        formatted_answer = "".join(
-            f"<p>{line.strip()}</p>" if not line.startswith("-") else f"<li>{line[1:].strip()}</li>"
-            for line in raw_answer.split("\n")
-        )
-        formatted_answer = f"<ul>{formatted_answer}</ul>" if "<li" in formatted_answer else formatted_answer
-
-        formatted_explanation = "".join(
-            f"<p>{line.strip()}</p>" if not line.startswith("-") else f"<li>{line[1:].strip()}</li>"
-            for line in explanation.split("\n")
-        )
-        formatted_explanation = f"<ul>{formatted_explanation}</ul>" if "<li" in formatted_explanation else formatted_explanation
-
-        return {
-            "answer": f"<div style='font-size: 16px; font-weight: bold; color: #007BFF;'>{formatted_answer}</div>",
-            "explanation": f"<div style='font-family: Arial, sans-serif; font-size: 14px; line-height: 1.8; color: #444;'>{formatted_explanation}</div>"
-        }
-
-    except Exception as e:
-        logging.error(f"Unhandled error: {e}")
-        return {"error": "An unexpected error occurred."}
-
-@app.get("/google-login/")
-async def google_login():
-    google_auth_url = (
-        f"https://accounts.google.com/o/oauth2/v2/auth"
-        f"?client_id={GOOGLE_CLIENT_ID}"
-        f"&redirect_uri=https://efiway.onrender.com/google-auth/callback"
-        f"&response_type=code&scope=openid email profile"
-    )
-    return {"url": google_auth_url}
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000)
